@@ -2,12 +2,12 @@ from datetime import datetime
 from flask import Flask, request
 from flask_sqlalchemy import SQLAlchemy
 
-from app.database import scan, read, insert, update
 
 app = Flask(__name__)
 app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///mydb.db"
 db = SQLAlchemy(app)
 
+from app.database import User
 
 @app.route('/')
 def home():
@@ -25,7 +25,17 @@ def get_all_users():
         "status": "ok",
         "message": "Success"
     }
-    out["body"] = scan()
+    users = User.query.all()
+    out["body"] = []
+    for user in users:
+        user_dictionary = {}
+        user_dictionary["id"] = user.id
+        user_dictionary["first_name"] = user.first_name
+        user_dictionary["last_name"] = user.last_name
+        user_dictionary["hobbies"] = user.hobbies
+        user_dictionary["active"] = user.active
+        out["body"].append(user_dictionary)
+
     return out
 
 
@@ -35,8 +45,32 @@ def get_single_user(pk):
         "status": "ok",
         "message": "Success"
     }
-    out["body"] = read(pk)
+    user = User.query.filter_by(id=pk).first()
+    out["body"] = {
+        "user": {
+            "id": user.id,
+            "first_name": user.first_name,
+            "last_name": user.last_name,
+            "hobbies": user.hobbies,
+            "active": user.active
+        }
+    }
     return out
+
+
+# @app.route('/users', methods=["POST"])
+# def create_user():
+#     out = {
+#         "status": "ok",
+#         "message": "Success"
+#     }
+#     user_data = request.json
+#     out["user_id"] = insert(
+#         user_data.get("first_name"),
+#         user_data.get("last_name"),
+#         user_data.get("hobbies")
+#     )
+#     return out, 201
 
 
 @app.route('/users', methods=["POST"])
@@ -46,31 +80,22 @@ def create_user():
         "message": "Success"
     }
     user_data = request.json
-    out["user_id"] = insert(
-        user_data.get("first_name"),
-        user_data.get("last_name"),
-        user_data.get("hobbies")
+    db.session.add(
+        User(
+            first_name = user_data.get("first_name"),
+            last_name = user_data.get("last_name"),
+            hobbies = user_data.get("hobbies")
+        )
     )
+    db.session.commit()
+
     return out, 201
 
-
-@app.route('/users', methods=["PUT"])
-def view_user():
+@app.route('/users/update')
+def update_user():
     out = {
         "status": "ok",
         "message": "Success"
     }
-    user_data = request.json
-    out["user_id"] = update(
-        user_data.get("id"),
-        user_data.get("first_name"),
-        user_data.get("last_name"),
-        user_data.get("hobbies")
-    )
+
     return out
-
-
-@app.route('/agent')
-def agent():
-    user_agent = request.headers.get('User-Agent')
-    return "<p>Your user agent is %s</p>" % user_agent
