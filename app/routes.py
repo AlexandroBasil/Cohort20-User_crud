@@ -36,7 +36,7 @@ def get_single_user(pk):
     return out
 
 
-@app.route('/users', method=["POST"])
+@app.route('/users', methods=["POST"])
 def create_user():
     out = {
         "status": "ok",
@@ -51,7 +51,7 @@ def create_user():
     return out, 201
 
 
-@app.route('/users', method=["PUT"])
+@app.route('/users', methods=["PUT"])
 def view_user():
     out = {
         "status": "ok",
@@ -65,3 +65,9 @@ def view_user():
         user_data.get("hobbies")
     )
     return out
+
+
+@app.route('/agent')
+def agent():
+    user_agent = request.headers.get('User-Agent')
+    return "<p>Your user agent is %s</p>" % user_agent
