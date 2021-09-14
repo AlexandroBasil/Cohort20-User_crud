@@ -1,9 +1,12 @@
 from datetime import datetime
 from flask import Flask, request
+from flask_sqlalchemy import SQLAlchemy
 
 from app.database import scan, read, insert, update
 
 app = Flask(__name__)
+app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///mydb.db"
+db = SQLAlchemy(app)
 
 
 @app.route('/')
