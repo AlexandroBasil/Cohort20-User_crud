@@ -1,5 +1,5 @@
 from datetime import datetime
-from flask import Flask, request
+from flask import Flask, request, render_template
 from flask_sqlalchemy import SQLAlchemy
 
 
@@ -16,27 +16,27 @@ def home():
         "message": "Success",
         "server_time": datetime.now().strftime("%F %H:%M:%S")
     }
-    return out
+    return render_template('home.html', data=out)
 
 
 @app.route('/users')
 def get_all_users():
-    out = {
-        "status": "ok",
-        "message": "Success"
-    }
+    # out = {
+    #     "status": "ok",
+    #     "message": "Success"
+    # }
     users = User.query.all()
-    out["body"] = []
-    for user in users:
-        user_dictionary = {}
-        user_dictionary["id"] = user.id
-        user_dictionary["first_name"] = user.first_name
-        user_dictionary["last_name"] = user.last_name
-        user_dictionary["hobbies"] = user.hobbies
-        user_dictionary["active"] = user.active
-        out["body"].append(user_dictionary)
+    # out["body"] = []
+    # for user in users:
+    #     user_dictionary = {}
+    #     user_dictionary["id"] = user.id
+    #     user_dictionary["first_name"] = user.first_name
+    #     user_dictionary["last_name"] = user.last_name
+    #     user_dictionary["hobbies"] = user.hobbies
+    #     user_dictionary["active"] = user.active
+    #     out["body"].append(user_dictionary)
 
-    return out
+    return render_template("user_list.html", users=users)
 
 
 @app.route('/users/<int:pk>')
@@ -55,7 +55,9 @@ def get_single_user(pk):
             "active": user.active
         }
     }
-    return out
+    if user:
+        return render_template("user_detail.html", data=user)
+    return render_template("404.html"), 404
 
 
 # @app.route('/users', methods=["POST"])
@@ -99,3 +101,8 @@ def update_user():
     }
 
     return out
+
+
+@app.errorhandler(404)
+def page_not_found(e):
+    return render_template("404.html"), 404

@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+
+
+{% block title %} User Details {% endblock title %}
+
+{% block content %}
+    <h4>User ID:</h4>
+    <p>{{ data.id }}</p>
+
+    <h4>User Name:</h4>
+    <p>{{data.last_name|capitalize }}, {{ data.first_name }}</p>
+
+    <h4>Hobbies:</h4>
+    <p>
+        {{ data.hobbies }}
+    </p>
+{% endblock content %}

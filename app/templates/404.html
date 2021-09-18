@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+
+
+{% block title %} Uh-Oh {% endblock title %}
+
+{% block content %}
+    <h1>YOU'RE LOST!</h1>
+    <p>This user could not be located.</p>
+    <p>Click <a href="{{ url_for('home')">here</a> to return to user list.</p>
+    <img class="not-found-img" src="{{ url_for('static', filename='img/iceberg.jfif'), _external=True}}">
+{% endblock content %}

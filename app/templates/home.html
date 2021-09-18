@@ -1,0 +1,28 @@
+<!-- The result is: {{ mynumber }}
+
+{% if myvar == True %}
+    <h1>The variable was true!</h1>
+{% else %}
+    <h1>The variable was false.</h1>
+{% endif %}
+
+{% for item in my_list %}
+    <h1>The item is: {{ item }}</h1>
+{% endfor %} -->
+
+{% extends "base.html" %}
+
+{% block title %} Home {% endblock title %}
+
+
+{% block content %}
+    {% if data["status"] == "ok" %}
+        <h1>Server Running</h1>
+        <p><small>Server time: {{ data["server_time"] }}</small></p>
+        <p>Server responded: {{ data["message"] }}</p>
+    {% else %}
+        <h1>Server Reports Errors</h1>
+        <p><small>Server time: {{ data["server_time"] }}</small></p>
+        <p>Server responded: {{ data["message"] }}</p>
+    {% endif %}
+{% endblock content %}
